@@ -77,16 +77,6 @@ class MSSQB
         return $this;
     }
 
-    private function parseQueryValues(string $placeholder, string $values): self
-    {
-        $placeholder = ('{' . $placeholder . '}');
-
-        $this->query = strtr($this->query, [
-            $placeholder => $values
-        ]);
-        return $this;
-    }
-
     public function getQuery(): string
     {
         return $this->query;
@@ -186,44 +176,6 @@ class MSSQB
         return $this;
     }
 
-    private function buildConditionString(array $conditions, string $glue = ' AND '): string
-    {
-        $output = '';
-        $counter = 0;
-        foreach ($conditions as $column => $value) {
-            $prefix = ($counter === 0) ? '' : $glue;
-
-            // Prepare the value
-            $value = $this->escapeQuotes($value);
-
-            if (stripos($column, 'LIKE') === false) {
-                // Normal Statement
-                $output .= ($prefix . $column . ' = "' . $value . '"');
-            } else {
-                // Like Statement
-                $output .= ($prefix . $column . ' "%' . $value . '%"');
-            }
-            $counter++;
-        }
-        return $output;
-    }
-
-    // no return types and param type hint because of when param given is null
-    private function escapeQuotes($raw)
-    {
-        if (!is_string($raw)) {
-            return $raw;
-        }
-
-        $escaped = $raw;
-
-        // Escape single and double quotes.
-        $escaped = str_replace("'", "\'", $escaped);
-        $escaped = str_replace('"', '\"', $escaped);
-        return $escaped;
-    }
-
-
     public function order(array $columnsMethods): self
     {
         if (empty($this->query)) {
@@ -266,6 +218,53 @@ class MSSQB
         $this->query = $this->getQueryStructure($structureName);
         $this->parseQueryValues('table', $this->getTable());
         return $this;
+    }
+
+    private function parseQueryValues(string $placeholder, string $values): self
+    {
+        $placeholder = ('{' . $placeholder . '}');
+
+        $this->query = strtr($this->query, [
+            $placeholder => $values
+        ]);
+        return $this;
+    }
+
+    private function buildConditionString(array $conditions, string $glue = ' AND '): string
+    {
+        $output = '';
+        $counter = 0;
+        foreach ($conditions as $column => $value) {
+            $prefix = ($counter === 0) ? '' : $glue;
+
+            // Prepare the value
+            $value = $this->escapeQuotes($value);
+
+            if (stripos($column, 'LIKE') === false) {
+                // Normal Statement
+                $output .= ($prefix . $column . ' = "' . $value . '"');
+            } else {
+                // Like Statement
+                $output .= ($prefix . $column . ' "%' . $value . '%"');
+            }
+            $counter++;
+        }
+        return $output;
+    }
+
+    // no return types and param type hint because of when param given is null
+    private function escapeQuotes($raw)
+    {
+        if (!is_string($raw)) {
+            return $raw;
+        }
+
+        $escaped = $raw;
+
+        // Escape single and double quotes.
+        $escaped = str_replace("'", "\'", $escaped);
+        $escaped = str_replace('"', '\"', $escaped);
+        return $escaped;
     }
 
     private function error(string $msg)
