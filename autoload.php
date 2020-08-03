@@ -28,8 +28,9 @@ spl_autoload_register(function(string $className): void
     unset($directories[0]);
 
     // Load class
-    $classPath = ($namespace . DS . $directories[1]);
-    $classPath = ($classPath . '.php');
+    $classPath = dirname(__DIR__) . DS;
+    $classPath = $classPath . $namespace . DS . $directories[1];
+    $classPath = $classPath . '.php';
 
     if (is_file($classPath) === false) {
         // @NOTE Don't throw an exception, because this will prevent PHP from trying other autoloaders to load the file when this autoloader cannot.

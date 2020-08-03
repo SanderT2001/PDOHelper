@@ -8,32 +8,37 @@
  */
 namespace PDOHelper;
 
-include_once './PDOHelper/autoload.php';
+require_once 'autoload.php';
 
-use PDOHelper\MSSQB;
-use PDOHelper\PDOConnection;
+use pdohelper\MSSQB;
+use pdohelper\PDOConnection;
 
 class PDOHelper
 {
     /**
      * @var PDOConnection
      */
-    private $pdo = null;
+    protected $pdo = null;
 
     /**
      * @var SqlQueryBuilder
      */
-    private $queryBuilder = null;
+    protected $queryBuilder = null;
 
     /**
      * @var string
      */
-    private $table = null;
+    protected $table = null;
+
+    /**
+     * @var string
+     */
+    protected $entityPath = null;
 
     /**
      * @var bool
      */
-    private $debug = false;
+    protected $debug = false;
 
     public function __construct(
         string $host,
@@ -58,12 +63,29 @@ class PDOHelper
         return $this->queryBuilder;
     }
 
+    public function getTable(): ?string
+    {
+        return $this->table;
+    }
+
     public function setTable(string $table): self
     {
         $this->table = $table;
         $this->pdo->setTable($table);
         $this->queryBuilder->setTable($table);
 
+        return $this;
+    }
+
+    public function getEntityPath(): ?string
+    {
+        return $this->entityPath;
+    }
+
+    public function setEntityPath(string $path): self
+    {
+        $this->entityPath = $path;
+        $this->pdo->setEntityPath($path);
         return $this;
     }
 

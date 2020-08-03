@@ -27,6 +27,8 @@ class PDOConnection
 
     private $table        = null;
 
+    private $entity_path  = null;
+
     private $debug        = false;
 
     public function __construct() { }
@@ -108,6 +110,17 @@ class PDOConnection
         return $this;
     }
 
+    public function getEntityPath(): ?string
+    {
+        return $this->entity_path;
+    }
+
+    public function setEntityPath($path): self
+    {
+        $this->entity_path = $path;
+        return $this;
+    }
+
     public function getDebug(): bool
     {
         return $this->debug;
@@ -147,7 +160,10 @@ class PDOConnection
 
     public function fetchAll(string $query): array
     {
-        return $this->execute($query, true)->fetchAll(\PDO::FETCH_ASSOC);
+        if ($this->getEntityPath() === null) {
+            return $this->execute($query, true)->fetchAll(\PDO::FETCH_ASSOC);
+        }
+        return $this->execute($query, true)->fetchAll(\PDO::FETCH_CLASS, $this->getEntityPath());
     }
 
     public function execute(string $query, bool $returnHandler = false)

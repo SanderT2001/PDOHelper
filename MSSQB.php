@@ -155,7 +155,7 @@ class MSSQB
             return $this->error('No Query Selected');
         }
 
-        $values = (is_string($columns)) ? $columns : '';
+        $values = (is_string($columns)) ? $columns : '*';
         if (is_array($columns)) {
             $values = implode(', ', $columns);
         }
