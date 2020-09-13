@@ -48,6 +48,8 @@ class MSSQB
      */
     public $query = '';
 
+    public function __construct() { }
+
     public function getTable(): string
     {
         return $this->table;
@@ -82,11 +84,11 @@ class MSSQB
         return $this->query;
     }
 
-    public function __construct() { }
-
     public function select(): self
     {
         $this->startNewQuery('select');
+        // By default select all columns
+        $this->columns('*');
         return $this;
     }
 

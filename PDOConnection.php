@@ -129,6 +129,8 @@ class PDOConnection
     public function setDebug(bool $debug): self
     {
         $this->debug = $debug;
+        if ($debug === true)
+            $this->getPDO()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         return $this;
     }
 
