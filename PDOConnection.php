@@ -174,6 +174,10 @@ class PDOConnection
 
         $handler = $queryHandler->prepare($query);
         $result  = $handler->execute();
-        return ($returnHandler) ? $handler : $result;
+        if ($returnHandler)
+            return $handler;
+        if (!$result)
+            return false;
+        return $queryHandler->lastInsertId();
     }
 }

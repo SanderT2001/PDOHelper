@@ -243,8 +243,13 @@ class MSSQB
             $value = $this->escapeQuotes($value);
 
             if (stripos($column, 'LIKE') === false) {
+                // @TODO Dit kan beter!
                 // Normal Statement
-                $output .= ($prefix . $column . ' = "' . $value . '"');
+                if (substr($column, -1) === '=') {
+                    $output .= ($prefix . $column . ' "' . $value . '"');
+                } else {
+                    $output .= ($prefix . $column . ' = "' . $value . '"');
+                }
             } else {
                 // Like Statement
                 $output .= ($prefix . $column . ' "%' . $value . '%"');
