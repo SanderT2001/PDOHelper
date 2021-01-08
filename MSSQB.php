@@ -171,6 +171,9 @@ class MSSQB
         if (empty($this->query)) {
             return $this->error('No Query Selected');
         }
+        if (empty($conditions)) {
+            return $this;
+        }
 
         $this->addQueryAttribute('where')
              ->parseQueryValues('where', $this->buildConditionString($conditions));
@@ -243,7 +246,6 @@ class MSSQB
             $value = $this->escapeQuotes($value);
 
             if (stripos($column, 'LIKE') === false) {
-                // @TODO Dit kan beter!
                 // Normal Statement
                 if (substr($column, -1) === '=') {
                     $output .= ($prefix . $column . ' "' . $value . '"');
@@ -252,7 +254,11 @@ class MSSQB
                 }
             } else {
                 // Like Statement
-                $output .= ($prefix . $column . ' "%' . $value . '%"');
+                if (stripos($value, '%') === false) {
+                    $output .= ($prefix . $column . ' "%' . $value . '%"');
+                } else {
+                    $output .= ($prefix . $column . ' "' . $value . '"');
+                }
             }
             $counter++;
         }
