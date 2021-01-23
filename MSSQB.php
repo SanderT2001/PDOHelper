@@ -247,7 +247,11 @@ class MSSQB
 
             if (stripos($column, 'LIKE') === false) {
                 // Normal Statement
-                if (substr($column, -1) === '=') {
+                if (
+                       substr($column, -1) === '='
+                    || substr($column, -1) === '>'
+                    || substr($column, -1) === '<'
+                ) {
                     $output .= ($prefix . $column . ' "' . $value . '"');
                 } else {
                     $output .= ($prefix . $column . ' = "' . $value . '"');
